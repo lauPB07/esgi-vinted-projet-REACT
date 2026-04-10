@@ -3,6 +3,7 @@ import type { Article } from "../types/article.ts";
 import { api } from "../services/api.ts";
 import { useNavigate, useParams } from "react-router-dom";
 import { ArticleDetail } from "../components/ArticleDetailsItem.tsx";
+import { Spinner } from "@material-tailwind/react";
 
 const API_URL = "/api/articles";
 export default function ArticleDetailPage() {
@@ -10,13 +11,27 @@ export default function ArticleDetailPage() {
 
   const navigate = useNavigate();
 
-  const { data: article, error, isLoading } = useQuery<Article>({
+  const {
+    data: article,
+    error,
+    isLoading,
+  } = useQuery<Article>({
     queryKey: ["articles", id],
-    queryFn: () => api.get<Article>(API_URL + "/" + id)
+    queryFn: () => api.get<Article>(API_URL + "/" + id),
   });
 
   if (isLoading) {
-    return "Loading...";
+    return (
+      <div className="flex h-[60vh] w-full items-center justify-center">
+        <Spinner
+          className="h-16 w-16 text-green-600"
+          onResize={undefined}
+          onResizeCapture={undefined}
+          onPointerEnterCapture={undefined}
+          onPointerLeaveCapture={undefined}
+        />
+      </div>
+    );
   }
 
   if (error || !article) {
@@ -41,7 +56,11 @@ export default function ArticleDetailPage() {
           stroke="currentColor"
           className="w-4 h-4 transition-transform group-hover:-translate-x-1"
         >
-          <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"
+          />
         </svg>
 
         <span>Retour</span>
@@ -49,5 +68,5 @@ export default function ArticleDetailPage() {
       <h1 className="text-3xl font-bold mb-6">Détails de l'article</h1>
       <ArticleDetail article={article} />
     </div>
-  )
+  );
 }
