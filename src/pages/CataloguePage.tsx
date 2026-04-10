@@ -4,16 +4,42 @@ import { ArticleList } from "../components/ArticleList.tsx";
 import { api } from "../services/api.ts";
 import { useNavigate } from "react-router-dom";
 import { Spinner } from "@material-tailwind/react";
+import { useEffect, useState } from "react";
 
 const API_URL = "/api/articles";
 
 export default function CataloguePage() {
+  const [search, setSearch] = useState("")
+  const [debouncedSearch, setDebouncedSearch] = useState("");
+  const [category, setCategory] = useState("");
+  const [condition, setCondition] = useState("");
+  const [priceMin, setMinPrice] = useState(0);
+  const [priceMax, setMaxPrice] = useState(0);
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedSearch(search);
+    }, 500);
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [search]);
+
   const navigate = useNavigate();
   const { data, error, isLoading } = useQuery<Article[]>({
-    queryKey: ["articles"],
+    queryKey: ["articles", { search: debouncedSearch, category, condition, priceMin, priceMax }],
     queryFn: async () => {
-      const result = await api.get<Article[]>(API_URL);
-      console.log("Ma data reçue :", result);
+      const result = await api.get<Article[]>(API_URL, {
+        params: {
+          search: debouncedSearch,
+          category,
+          condition,
+          priceMin,
+          priceMax,
+        },
+      });
+      if (!result) throw new Error("Erreur HTTP");
       return result;
     },
   });
@@ -57,11 +83,14 @@ export default function CataloguePage() {
           </svg>
           <input
             type="text"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
             placeholder="Search..."
             className="w-full h-full outline-none text-sm text-gray-500 bg-transparent"
           />
           <button
             type="submit"
+            onClick={() => setDebouncedSearch(search)}
             className="bg-green-700 w-32 h-9 rounded-full text-sm text-white mr-[5px] shrink-0 hover:bg-green-800 transition-colors"
           >
             Search
