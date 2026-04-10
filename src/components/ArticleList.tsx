@@ -2,7 +2,7 @@ import { ArticleItem } from "./ArticleItem.tsx";
 import type { Article } from "../types/article.ts";
 
 type ArticleListProps = {
-    articles: Article[]; // On précise que c'est un tableau d'objets "Article"
+    articles: Article[];
     onClickTitle: (idArticle: string) => void;
 };
 

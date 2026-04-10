@@ -16,7 +16,6 @@ const getAvatarColor = (name: string) => {
         'bg-yellow-400', 'bg-purple-400', 'bg-pink-400',
         'bg-indigo-400', 'bg-teal-400'
     ];
-    // Somme des codes ASCII des lettres du nom pour choisir un index
     const charSum = name.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
     return colors[charSum % colors.length];
 };
