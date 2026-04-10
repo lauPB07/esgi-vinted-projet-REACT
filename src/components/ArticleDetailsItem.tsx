@@ -4,7 +4,18 @@ type ArticleDetailProps = {
   article: Article;
 };
 
+const getAvatarColor = (name: string) => {
+  const colors = [
+    'bg-red-400', 'bg-blue-400', 'bg-green-400',
+    'bg-yellow-400', 'bg-purple-400', 'bg-pink-400',
+    'bg-indigo-400', 'bg-teal-400'
+  ];
+  const charSum = name.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+  return colors[charSum % colors.length];
+};
+
 export function ArticleDetail({ article }: ArticleDetailProps) {
+  const avatarColor = getAvatarColor(article.userName);
   return (
     <div className="max-w-5xl mx-auto p-6">
       <div className="flex flex-col md:flex-row gap-12">
@@ -47,7 +58,8 @@ export function ArticleDetail({ article }: ArticleDetailProps) {
             </p>
           </div>
           <div className="mt-4 pt-4 border-t border-gray-100 flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-brand-softer flex items-center justify-center text-brand-strong font-bold">
+            <div
+              className={`w-7 h-7 rounded-full ${avatarColor} flex items-center justify-center text-[11px] font-bold text-white shadow-sm`}>
               {article.userName.charAt(0).toUpperCase()}
             </div>
             <div className="flex flex-col">

@@ -15,7 +15,9 @@ export function ArticleList({ articles, onClickTitle }: ArticleListProps) {
               id={article.id}
               title={article.title}
               price={article.price}
+              category={article.category}
               size={article.size}
+              condition={article.condition}
               imageUrl={article.imageUrl}
               userName={article.userName}
               onClickTitle={onClickTitle}
