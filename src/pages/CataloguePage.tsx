@@ -15,6 +15,7 @@ export default function CataloguePage() {
   const [condition, setCondition] = useState("");
   const [priceMin, setMinPrice] = useState(0);
   const [priceMax, setMaxPrice] = useState(0);
+  const [clearFilters, setClearFilters] = useState(false);
 
   useEffect(() => {
     const handler = setTimeout(() => {
@@ -28,17 +29,31 @@ export default function CataloguePage() {
 
   const navigate = useNavigate();
   const { data, error, isLoading } = useQuery<Article[]>({
-    queryKey: ["articles", { search: debouncedSearch, category, condition, priceMin, priceMax }],
+    queryKey: ["articles",  debouncedSearch, category, condition, priceMin, priceMax ],
     queryFn: async () => {
-      const result = await api.get<Article[]>(API_URL, {
-        params: {
-          search: debouncedSearch,
-          category,
-          condition,
-          priceMin,
-          priceMax,
-        },
+      const rawParams: Record<string, string | number | undefined> = {
+        search: debouncedSearch,
+        category: category,
+        condition: condition,
+        minPrice: priceMin,
+        maxPrice: priceMax,
+      };
+
+      const cleanParams = new URLSearchParams();
+
+      Object.entries(rawParams).forEach(([key, value]) => {
+        if (value !== undefined && value !== null && value !== "") {
+          if ((key === "minPrice" || key === "maxPrice") && Number(value) <= 0) {
+            return;
+          }
+          cleanParams.append(key, value.toString());
+        }
       });
+
+      const queryString = cleanParams.toString();
+      const path = queryString ? `${API_URL}?${queryString}` : API_URL;
+
+      const result = await api.get<Article[]>(path);
       if (!result) throw new Error("Erreur HTTP");
       return result;
     },
@@ -64,6 +79,14 @@ export default function CataloguePage() {
 
   function onCliTitle(idArticle: string) {
     navigate(`/articles/${idArticle}`);
+  }
+
+  if (clearFilters) {
+    setCategory("");
+    setCondition("");
+    setMinPrice(0);
+    setMaxPrice(0);
+    setClearFilters(false);
   }
 
   return (
@@ -97,12 +120,12 @@ export default function CataloguePage() {
           </button>
         </div>
 
-        <div className="flex flex-col w-44 text-sm relative">
+        <div className="group flex flex-col w-44 text-sm relative">
           <button
             type="button"
-            className="peer group w-full h-[46px] text-left px-4 py-2 border rounded-full bg-white text-gray-700 border-gray-500/30 shadow-sm hover:bg-gray-50 focus:outline-none flex items-center justify-between"
+            className="w-full h-[46px] text-left px-4 py-2 border rounded-full bg-white text-gray-700 border-gray-500/30 shadow-sm hover:bg-gray-50 focus:outline-none flex items-center justify-between"
           >
-            <span>Catégories</span>
+            <span>{category || "Catégories"}</span>
             <svg
               className="w-5 h-5 transition-transform duration-200 -rotate-90 group-focus:rotate-0"
               xmlns="http://www.w3.org/2000/svg"
@@ -118,10 +141,11 @@ export default function CataloguePage() {
               />
             </svg>
           </button>
-          <ul className="absolute top-[50px] left-0 hidden peer-focus:flex flex-col w-full bg-white border border-gray-200 rounded-2xl shadow-lg py-2 z-50">
+          <ul  className="absolute top-[50px] left-0 hidden group-focus-within:flex flex-col w-full bg-white border border-gray-200 rounded-2xl shadow-lg py-2 z-50">
             {CATEGORIES.map((category) => (
               <li
                 key={category.id}
+                onMouseDown={() => setCategory(category.id)}
                 className="px-4 py-2 text-gray-600 hover:bg-gray-100 cursor-pointer transition-colors"
               >
                 {category.label}
@@ -130,10 +154,10 @@ export default function CataloguePage() {
           </ul>
         </div>
 
-        <div className="flex flex-col w-44 text-sm relative">
+        <div className="group flex flex-col w-44 text-sm relative">
           <button
             type="button"
-            className="peer group w-full h-[46px] text-left px-4 py-2 border rounded-full bg-white text-gray-700 border-gray-500/30 shadow-sm hover:bg-gray-50 focus:outline-none flex items-center justify-between"
+            className="w-full h-[46px] text-left px-4 py-2 border rounded-full bg-white text-gray-700 border-gray-500/30 shadow-sm hover:bg-gray-50 focus:outline-none flex items-center justify-between"
           >
             <span>Etat</span>
             <svg
@@ -151,10 +175,11 @@ export default function CataloguePage() {
               />
             </svg>
           </button>
-          <ul className="absolute top-[50px] left-0 hidden peer-focus:flex flex-col w-full bg-white border border-gray-200 rounded-2xl shadow-lg py-2 z-50">
+          <ul className="absolute top-[50px] left-0 hidden group-focus-within:flex flex-col w-full bg-white border border-gray-200 rounded-2xl shadow-lg py-2 z-50">
             {CONDITIONS.map((condition) => (
               <li
                 key={condition.value}
+                onMouseDown={() => setCondition(condition.value)}
                 className="px-4 py-2 text-gray-600 hover:bg-gray-100 cursor-pointer transition-colors"
               >
                 {condition.label}
@@ -211,6 +236,12 @@ export default function CataloguePage() {
             </button>
           </div>
         </div>
+          <button
+            onClick={() => setClearFilters(true)}
+            type="button"
+            className="h-[46px] w-fit px-6 border rounded-full bg-white text-gray-700 border-gray-500/20 shadow-sm hover:bg-gray-50 hover:text-gray-900 transition-all focus:outline-none flex items-center justify-center text-sm font-medium">
+            Clear
+          </button>
       </div>
 
       <ArticleList articles={data || []} onClickTitle={onCliTitle} />

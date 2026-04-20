@@ -22,18 +22,7 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
 }
 
 export const api = {
-  get: <T>(
-    path: string,
-    p0: {
-      params: {
-        search: string;
-        category: string;
-        condition: string;
-        priceMin: number;
-        priceMax: number;
-      };
-    },
-  ) => request<T>(path),
+  get: <T>(path: string) => request<T>(path),
 
   post: <T>(path: string, body: Record<string, unknown>) =>
     request<T>(path, {
