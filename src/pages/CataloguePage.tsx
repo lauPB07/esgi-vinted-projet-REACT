@@ -15,7 +15,6 @@ export default function CataloguePage() {
   const [condition, setCondition] = useState("");
   const [priceMin, setMinPrice] = useState(0);
   const [priceMax, setMaxPrice] = useState(0);
-  const [clearFilters, setClearFilters] = useState(false);
 
   useEffect(() => {
     const handler = setTimeout(() => {
@@ -81,17 +80,17 @@ export default function CataloguePage() {
     navigate(`/articles/${idArticle}`);
   }
 
-  if (clearFilters) {
+  const handleClearFilters = () => {
+    setSearch("");
     setCategory("");
     setCondition("");
     setMinPrice(0);
     setMaxPrice(0);
-    setClearFilters(false);
-  }
+  };
 
   return (
     <div>
-      <h1 className="text-3xl font-bold mb-6">Catalogue</h1>
+      <h1 className="text-3xl font-bold mb-6">Catalogue {data?.length}</h1>
 
       <div className="flex items-start gap-4">
         <div className="flex items-center border pl-4 gap-2 bg-white border-gray-500/30 h-[46px] rounded-full overflow-hidden max-w-md w-full">
@@ -237,7 +236,7 @@ export default function CataloguePage() {
           </div>
         </div>
           <button
-            onClick={() => setClearFilters(true)}
+            onClick={handleClearFilters}
             type="button"
             className="h-[46px] w-fit px-6 border rounded-full bg-white text-gray-700 border-gray-500/20 shadow-sm hover:bg-gray-50 hover:text-gray-900 transition-all focus:outline-none flex items-center justify-center text-sm font-medium">
             Clear
