@@ -29,8 +29,11 @@ export default function PublishPage() {
       });
       alertMessage("Article publié avec succès !");
       navigate(`/articles/${createdArticle.id}`);
-    },}
-  )
+    },
+    onError: (error) => {
+      alert(`Erreur lors de la publication : ${error.message}`);
+    },
+  })
 
   async function handleCreateArticle(data: ArticleFormData) {
     await createArticleMutation.mutateAsync(data);

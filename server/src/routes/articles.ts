@@ -50,8 +50,17 @@ export function createArticlesRouter(
 
     let results = [...getArticles()];
 
+    const mine = _req.query.mine === "true";
+    const includeMine = _req.query.includeMine === "true";
     const currentUserId = _req.headers["x-user-id"];
-    if (typeof currentUserId === "string" && currentUserId) {
+
+    if (mine) {
+      if (typeof currentUserId !== "string" || !currentUserId) {
+        res.status(401).json({ error: "Identification requise" });
+        return;
+      }
+      results = results.filter((a) => a.userId === currentUserId);
+    } else if (!includeMine && typeof currentUserId === "string" && currentUserId) {
       results = results.filter((a) => a.userId !== currentUserId);
     }
 
