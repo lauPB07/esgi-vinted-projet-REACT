@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { type Article, CONDITIONS, CATEGORIES } from "../types/article.ts";
 import { ArticleList } from "../components/ArticleList.tsx";
 import { api } from "../services/api.ts";
@@ -27,6 +27,52 @@ export default function CataloguePage() {
   }, [search]);
 
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
+
+  const { data: favorites } = useQuery<Article[]>({
+    queryKey: ["favorites"],
+    queryFn: async () => {
+      try {
+        const result = await api.get<Article[]>("/api/favorites");
+        return result || [];
+      } catch {
+        return [];
+      }
+    },
+  });
+
+  const favoriteIds = new Set(favorites?.map((f) => f.id) || []);
+
+  const addFavoriteMutation = useMutation({
+    mutationFn: (articleId: string) => api.post(`/api/favorites/${articleId}`, {}),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["favorites"] });
+    },
+    onError: (error: unknown) => {
+      const message = error instanceof Error ? error.message : "Erreur lors de l'ajout aux favoris";
+      window.alert(message);
+    },
+  });
+
+  const removeFavoriteMutation = useMutation({
+    mutationFn: (articleId: string) => api.delete(`/api/favorites/${articleId}`),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["favorites"] });
+    },
+    onError: (error: unknown) => {
+      const message = error instanceof Error ? error.message : "Erreur lors de la suppression des favoris";
+      window.alert(message);
+    },
+  });
+
+  const handleToggleFavorite = async (articleId: string) => {
+    if (favoriteIds.has(articleId)) {
+      await removeFavoriteMutation.mutateAsync(articleId);
+    } else {
+      await addFavoriteMutation.mutateAsync(articleId);
+    }
+  };
+
   const { data, error, isLoading } = useQuery<Article[]>({
     queryKey: ["articles",  debouncedSearch, category, condition, priceMin, priceMax ],
     queryFn: async () => {
@@ -243,7 +289,13 @@ export default function CataloguePage() {
           </button>
       </div>
 
-      <ArticleList articles={data || []} onClickTitle={onCliTitle} />
+      <ArticleList
+        articles={data || []}
+        onClickTitle={onCliTitle}
+        showFavoriteButton={true}
+        onToggleFavorite={handleToggleFavorite}
+        favoriteIds={favoriteIds}
+      />
     </div>
   );
 }
