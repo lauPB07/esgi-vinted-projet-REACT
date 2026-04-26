@@ -90,7 +90,7 @@ export default function CataloguePage() {
 
   return (
     <div>
-      <h1 className="text-3xl font-bold mb-6">Catalogue {data?.length}</h1>
+      <h1 className="text-3xl font-bold mb-6">Catalogue git {data?.length}</h1>
 
       <div className="flex items-start gap-4">
         <div className="flex items-center border pl-4 gap-2 bg-white border-gray-500/30 h-[46px] rounded-full overflow-hidden max-w-md w-full">
