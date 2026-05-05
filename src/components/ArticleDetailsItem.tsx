@@ -1,8 +1,25 @@
 import type { Article } from "../types/article.ts";
+import { getCategoryLabelByValue, getConditionLabelByValue } from "../types/article.ts";
 
 type ArticleDetailProps = {
   article: Article;
 };
+
+const formatDate = (value: string): string => {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return value;
+  return date.toLocaleDateString("fr-FR", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  });
+};
+
+const formatPrice = (value: number): string =>
+  new Intl.NumberFormat("fr-FR", {
+    style: "currency",
+    currency: "EUR",
+  }).format(value);
 
 const getAvatarColor = (name: string) => {
   const colors = [
@@ -38,7 +55,7 @@ export function ArticleDetail({ article }: ArticleDetailProps) {
         <div className="w-full md:w-[350px] flex flex-col gap-6 bg-white p-6 rounded-xl border border-gray-100 shadow-sm">
           <div className="space-y-1">
             <h1 className="text-4xl font-bold text-gray-900">
-              {article.price} €
+              {formatPrice(article.price)}
             </h1>
             <h2 className="text-lg text-gray-700 font-medium">
               {article.title}
@@ -56,13 +73,13 @@ export function ArticleDetail({ article }: ArticleDetailProps) {
             <div className="flex justify-between text-sm">
               <span className="text-gray-400">ÉTAT</span>
               <span className="text-gray-800 font-semibold">
-                {article.condition}
+                {getConditionLabelByValue(article.condition)}
               </span>
             </div>
             <div className="flex justify-between text-sm">
               <span className="text-gray-400">CATÉGORIE</span>
               <span className="text-gray-800 font-semibold">
-                {article.category}
+                {getCategoryLabelByValue(article.category)}
               </span>
             </div>
           </div>
@@ -89,6 +106,10 @@ export function ArticleDetail({ article }: ArticleDetailProps) {
               <span className="text-xs text-green-600">En ligne récemment</span>
             </div>
           </div>
+          <p className="text-gray-600 leading-relaxed text-sm">
+            Publiée le
+            { " " + formatDate(article.createdAt)}
+          </p>
           <button className="w-full bg-brand hover:bg-brand-strong text-white font-bold py-3 rounded-md transition-all mt-2">
             Acheter
           </button>

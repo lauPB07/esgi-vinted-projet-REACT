@@ -30,6 +30,12 @@ const formatDate = (value: string): string => {
   });
 };
 
+const formatPrice = (value: number): string =>
+  new Intl.NumberFormat("fr-FR", {
+    style: "currency",
+    currency: "EUR",
+  }).format(value);
+
 const getAvatarColor = (name: string) => {
   const colors = [
     "bg-red-400",
@@ -170,7 +176,7 @@ export function ArticleItem({
         ) : null}
       </div>
       <div className="flex flex-col px-1">
-        <span className="text-base font-bold text-gray-900">{price} €</span>
+        <span className="text-base font-bold text-gray-900">{formatPrice(price)}</span>
         <span className="text-xs text-gray-400 uppercase tracking-tighter">
           {size}
         </span>
