@@ -149,8 +149,8 @@ export default function CataloguePage() {
   return (
     <div>
       <h1 className="text-3xl font-bold mb-6">Catalogue</h1>
-      <div className="flex items-start gap-4">
-        <div className="flex items-center border pl-4 gap-2 bg-white border-gray-500/30 h-[46px] rounded-full overflow-hidden max-w-md w-full">
+      <div className="flex flex-col sm:flex-row sm:flex-wrap items-stretch sm:items-start gap-3 mb-6">
+        <div className="flex items-center border pl-4 gap-2 bg-white border-gray-500/30 h-[46px] rounded-full overflow-hidden w-full sm:max-w-md sm:flex-1 sm:basis-full lg:basis-auto">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="24"
@@ -170,18 +170,18 @@ export default function CataloguePage() {
           <button
             type="submit"
             onClick={() => setDebouncedSearch(search)}
-            className="bg-green-700 w-32 h-9 rounded-full text-sm text-white mr-[5px] shrink-0 hover:bg-green-800 transition-colors"
+            className="bg-green-700 w-20 sm:w-32 h-9 rounded-full text-sm text-white mr-[5px] shrink-0 hover:bg-green-800 transition-colors"
           >
             Search
           </button>
         </div>
 
-        <div className="group flex flex-col w-44 text-sm relative">
+        <div className="group flex flex-col w-full sm:w-44 text-sm relative">
           <button
             type="button"
             className="w-full h-[46px] text-left px-4 py-2 border rounded-full bg-white text-gray-700 border-gray-500/30 shadow-sm hover:bg-gray-50 focus:outline-none flex items-center justify-between"
           >
-            <span>{getCategoryLabelByValue(category) || "Catégories"}</span>
+            <span className="truncate">{getCategoryLabelByValue(category) || "Catégories"}</span>
             <svg
               className="w-5 h-5 transition-transform duration-200 -rotate-90 group-focus:rotate-0"
               xmlns="http://www.w3.org/2000/svg"
@@ -210,12 +210,12 @@ export default function CataloguePage() {
           </ul>
         </div>
 
-        <div className="group flex flex-col w-44 text-sm relative">
+        <div className="group flex flex-col w-full sm:w-44 text-sm relative">
           <button
             type="button"
             className="w-full h-[46px] text-left px-4 py-2 border rounded-full bg-white text-gray-700 border-gray-500/30 shadow-sm hover:bg-gray-50 focus:outline-none flex items-center justify-between"
           >
-            <span>{getConditionLabelByValue(condition) || "Etat"}</span>
+            <span className="truncate">{getConditionLabelByValue(condition) || "Etat"}</span>
             <svg
               className="w-5 h-5 transition-transform duration-200 -rotate-90 group-focus:rotate-0"
               xmlns="http://www.w3.org/2000/svg"
@@ -244,7 +244,7 @@ export default function CataloguePage() {
           </ul>
         </div>
 
-        <div className="flex flex-col w-64 text-sm relative">
+        <div className="flex flex-col w-full sm:w-64 text-sm relative">
           <button
             type="button"
             className="peer group w-full h-[46px] text-left px-4 py-2 border rounded-full bg-white text-gray-700 border-gray-500/30 shadow-sm hover:bg-gray-50 focus:outline-none flex items-center justify-between"
@@ -264,7 +264,7 @@ export default function CataloguePage() {
               />
             </svg>
           </button>
-          <div className="absolute top-[55px] left-0 hidden peer-focus:flex hover:flex flex-col w-[300px] bg-white border border-gray-100 rounded-xl shadow-2xl p-6 z-50">
+          <div className="absolute top-[55px] left-0 right-0 sm:right-auto hidden peer-focus:flex hover:flex flex-col w-full sm:w-[300px] bg-white border border-gray-100 rounded-xl shadow-2xl p-6 z-50">
             <div className="flex gap-4 mb-6">
               <div className="flex-1">
                 <label className="text-[10px] uppercase text-gray-400 font-black block mb-2">
@@ -295,12 +295,12 @@ export default function CataloguePage() {
             </div>
           </div>
         </div>
-        <div className="group flex flex-col w-44 text-sm relative">
+        <div className="group flex flex-col w-full sm:w-44 text-sm relative">
           <button
             type="button"
             className="w-full h-[46px] text-left px-4 py-2 border rounded-full bg-white text-gray-700 border-gray-500/30 shadow-sm hover:bg-gray-50 focus:outline-none flex items-center justify-between"
           >
-            <span>{sortLabel || "Trier"}</span>
+            <span className="truncate">{sortLabel || "Trier"}</span>
             <svg
               className="w-5 h-5 transition-transform duration-200 -rotate-90 group-focus:rotate-0"
               xmlns="http://www.w3.org/2000/svg"
@@ -331,7 +331,7 @@ export default function CataloguePage() {
           <button
             onClick={handleClearFilters}
             type="button"
-            className="h-[46px] w-fit px-6 border rounded-full bg-white text-gray-700 border-gray-500/20 shadow-sm hover:bg-gray-50 hover:text-gray-900 transition-all focus:outline-none flex items-center justify-center text-sm font-medium">
+            className="h-[46px] w-full sm:w-fit px-6 border rounded-full bg-white text-gray-700 border-gray-500/20 shadow-sm hover:bg-gray-50 hover:text-gray-900 transition-all focus:outline-none flex items-center justify-center text-sm font-medium">
             Réinitialiser
           </button>
       </div>
