@@ -20,6 +20,16 @@ type ArticleItemProps = {
   onEdit?: (id: string) => void;
 };
 
+const formatDate = (value: string): string => {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return value;
+  return date.toLocaleDateString("fr-FR", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  });
+};
+
 const getAvatarColor = (name: string) => {
   const colors = [
     "bg-red-400",
@@ -167,7 +177,7 @@ export function ArticleItem({
         <span className="text-xs text-gray-400 truncate">{title}</span>
         <span className="text-xs text-gray-400 truncate">{getConditionLabelByValue(condition)}</span>
         <span className="text-xs text-gray-400 truncate">{getCategoryLabelByValue(category)}</span>
-        <span className="text-xs text-gray-400 truncate">{created_at}</span>
+        <span className="text-xs text-gray-400 truncate">{formatDate(created_at)}</span>
       </div>
     </div>
   );
