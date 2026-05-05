@@ -332,17 +332,49 @@ export default function CataloguePage() {
             onClick={handleClearFilters}
             type="button"
             className="h-[46px] w-fit px-6 border rounded-full bg-white text-gray-700 border-gray-500/20 shadow-sm hover:bg-gray-50 hover:text-gray-900 transition-all focus:outline-none flex items-center justify-center text-sm font-medium">
-            Clear
+            Réinitialiser
           </button>
       </div>
 
-      <ArticleList
-        articles={data || []}
-        onClickTitle={onCliTitle}
-        showFavoriteButton={true}
-        onToggleFavorite={handleToggleFavorite}
-        favoriteIds={favoriteIds}
-      />
+      {data && data.length > 0 ? (
+        <ArticleList
+          articles={data}
+          onClickTitle={onCliTitle}
+          showFavoriteButton={true}
+          onToggleFavorite={handleToggleFavorite}
+          favoriteIds={favoriteIds}
+        />
+      ) : (
+        <div className="flex flex-col items-center justify-center py-20 text-center">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth={1.5}
+            stroke="currentColor"
+            className="w-16 h-16 text-gray-300 mb-4"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"
+            />
+          </svg>
+          <h2 className="text-lg font-semibold text-gray-700">
+            Aucun article ne correspond à votre recherche
+          </h2>
+          <p className="text-sm text-gray-500 mt-1">
+            Essayez de modifier ou réinitialiser vos filtres.
+          </p>
+          <button
+            onClick={handleClearFilters}
+            type="button"
+            className="mt-6 h-[42px] px-6 border rounded-full bg-white text-gray-700 border-gray-500/20 shadow-sm hover:bg-gray-50 hover:text-gray-900 transition-all text-sm font-medium"
+          >
+            Réinitialiser les filtres
+          </button>
+        </div>
+      )}
     </div>
   );
 }

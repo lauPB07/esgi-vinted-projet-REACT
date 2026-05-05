@@ -18,23 +18,25 @@ export function ArticleList({
 }: ArticleListProps) {
   return (
     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-4 gap-4 p-4">
-      {articles.map((article) => (
-        <ArticleItem
-          key={article.id}
-          id={article.id}
-          title={article.title}
-          price={article.price}
-          category={article.category}
-          size={article.size}
-          condition={article.condition}
-          imageUrl={article.imageUrl}
-          userName={article.userName}
-          onClickTitle={onClickTitle}
-          showFavoriteButton={showFavoriteButton}
-          onToggleFavorite={onToggleFavorite}
-          isFavorite={favoriteIds?.has(article.id)}
-        />
-      ))}
+      {
+        articles.map((article) => (
+          <ArticleItem
+            key={article.id}
+            id={article.id}
+            title={article.title}
+            price={article.price}
+            category={article.category}
+            size={article.size}
+            condition={article.condition}
+            imageUrl={article.imageUrl}
+            userName={article.userName}
+            onClickTitle={onClickTitle}
+            showFavoriteButton={showFavoriteButton}
+            onToggleFavorite={onToggleFavorite}
+            isFavorite={favoriteIds?.has(article.id)}
+          />
+        ))
+      }
     </div>
   );
 }
