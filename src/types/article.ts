@@ -43,3 +43,12 @@ export const CONDITIONS: Condition[] = [
   { value: "bon_etat", label: "Bon état" },
   { value: "satisfaisant", label: "Satisfaisant" },
 ];
+
+export function getConditionLabelByValue(value: string): string {
+  return CONDITIONS.find((c) => c.value === value)?.label ?? value;
+}
+
+export function getCategoryLabelByValue(id: string): string {
+  return CATEGORIES.find((c) => c.id === id)?.label ?? id;
+}
+

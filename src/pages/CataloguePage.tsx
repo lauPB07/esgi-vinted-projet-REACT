@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { type Article, CONDITIONS, CATEGORIES } from "../types/article.ts";
+import { type Article, CONDITIONS, CATEGORIES, getCategoryLabelByValue, getConditionLabelByValue } from "../types/article.ts";
 import { ArticleList } from "../components/ArticleList.tsx";
 import { api } from "../services/api.ts";
 import { useNavigate } from "react-router-dom";
@@ -15,6 +15,16 @@ export default function CataloguePage() {
   const [condition, setCondition] = useState("");
   const [priceMin, setMinPrice] = useState(0);
   const [priceMax, setMaxPrice] = useState(0);
+  const [sort, setSort] = useState("");
+
+  const SORT_OPTIONS = [
+    { value: "date_desc", label: "Plus récent" },
+    { value: "date_asc", label: "Plus Anciens" },
+    { value: "price_asc", label: "Prix croissant" },
+    { value: "price_desc", label: "Prix décroissant" },
+  ];
+
+  const sortLabel = SORT_OPTIONS.find((s) => s.value === sort)?.label;
 
   useEffect(() => {
     const handler = setTimeout(() => {
@@ -74,21 +84,22 @@ export default function CataloguePage() {
   };
 
   const { data, error, isLoading } = useQuery<Article[]>({
-    queryKey: ["articles",  debouncedSearch, category, condition, priceMin, priceMax ],
+    queryKey: ["articles",  debouncedSearch, category, condition, priceMin, priceMax, sort ],
     queryFn: async () => {
       const rawParams: Record<string, string | number | undefined> = {
         search: debouncedSearch,
         category: category,
         condition: condition,
-        minPrice: priceMin,
-        maxPrice: priceMax,
+        priceMin: priceMin,
+        priceMax: priceMax,
+        sort: sort,
       };
 
       const cleanParams = new URLSearchParams();
 
       Object.entries(rawParams).forEach(([key, value]) => {
         if (value !== undefined && value !== null && value !== "") {
-          if ((key === "minPrice" || key === "maxPrice") && Number(value) <= 0) {
+          if ((key === "priceMin" || key === "priceMax") && Number(value) <= 0) {
             return;
           }
           cleanParams.append(key, value.toString());
@@ -132,12 +143,12 @@ export default function CataloguePage() {
     setCondition("");
     setMinPrice(0);
     setMaxPrice(0);
+    setSort("");
   };
 
   return (
     <div>
-      <h1 className="text-3xl font-bold mb-6">Catalogue git {data?.length}</h1>
-
+      <h1 className="text-3xl font-bold mb-6">Catalogue</h1>
       <div className="flex items-start gap-4">
         <div className="flex items-center border pl-4 gap-2 bg-white border-gray-500/30 h-[46px] rounded-full overflow-hidden max-w-md w-full">
           <svg
@@ -170,7 +181,7 @@ export default function CataloguePage() {
             type="button"
             className="w-full h-[46px] text-left px-4 py-2 border rounded-full bg-white text-gray-700 border-gray-500/30 shadow-sm hover:bg-gray-50 focus:outline-none flex items-center justify-between"
           >
-            <span>{category || "Catégories"}</span>
+            <span>{getCategoryLabelByValue(category) || "Catégories"}</span>
             <svg
               className="w-5 h-5 transition-transform duration-200 -rotate-90 group-focus:rotate-0"
               xmlns="http://www.w3.org/2000/svg"
@@ -204,7 +215,7 @@ export default function CataloguePage() {
             type="button"
             className="w-full h-[46px] text-left px-4 py-2 border rounded-full bg-white text-gray-700 border-gray-500/30 shadow-sm hover:bg-gray-50 focus:outline-none flex items-center justify-between"
           >
-            <span>Etat</span>
+            <span>{getConditionLabelByValue(condition) || "Etat"}</span>
             <svg
               className="w-5 h-5 transition-transform duration-200 -rotate-90 group-focus:rotate-0"
               xmlns="http://www.w3.org/2000/svg"
@@ -260,8 +271,11 @@ export default function CataloguePage() {
                   Min
                 </label>
                 <input
-                  type="text"
-                  defaultValue="200"
+                  type="number"
+                  min={0}
+                  value={priceMin || ""}
+                  onChange={(e) => setMinPrice(e.target.value === "" ? 0 : Number(e.target.value))}
+                  placeholder="0"
                   className="w-full border border-gray-200 rounded-xl px-3 py-3 text-center font-bold text-gray-700 focus:border-black outline-none transition-colors"
                 />
               </div>
@@ -270,16 +284,49 @@ export default function CataloguePage() {
                   Max
                 </label>
                 <input
-                  type="text"
-                  defaultValue="1,000"
+                  type="number"
+                  min={0}
+                  value={priceMax || ""}
+                  onChange={(e) => setMaxPrice(e.target.value === "" ? 0 : Number(e.target.value))}
+                  placeholder="1000"
                   className="w-full border border-gray-200 rounded-xl px-3 py-3 text-center font-bold text-gray-700 focus:border-black outline-none transition-colors"
                 />
               </div>
             </div>
-            <button className="w-full py-4 border-2 border-gray-100 rounded-xl font-black uppercase tracking-[0.1em] text-xs hover:bg-gray-50 transition-all active:scale-[0.98]">
-              Chercher
-            </button>
           </div>
+        </div>
+        <div className="group flex flex-col w-44 text-sm relative">
+          <button
+            type="button"
+            className="w-full h-[46px] text-left px-4 py-2 border rounded-full bg-white text-gray-700 border-gray-500/30 shadow-sm hover:bg-gray-50 focus:outline-none flex items-center justify-between"
+          >
+            <span>{sortLabel || "Trier"}</span>
+            <svg
+              className="w-5 h-5 transition-transform duration-200 -rotate-90 group-focus:rotate-0"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="#6B7280"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="m19 9-7 7-7-7"
+              />
+            </svg>
+          </button>
+          <ul className="absolute top-[50px] left-0 hidden group-focus-within:flex flex-col w-full bg-white border border-gray-200 rounded-2xl shadow-lg py-2 z-50">
+            {SORT_OPTIONS.map((option) => (
+              <li
+                key={option.value}
+                onMouseDown={() => setSort(option.value)}
+                className="px-4 py-2 text-gray-600 hover:bg-gray-100 cursor-pointer transition-colors"
+              >
+                {option.label}
+              </li>
+            ))}
+          </ul>
         </div>
           <button
             onClick={handleClearFilters}
