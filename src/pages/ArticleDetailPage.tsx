@@ -39,7 +39,7 @@ export default function ArticleDetailPage() {
   }
 
   function onClickChangePage() {
-    navigate("/");
+    navigate(-1);
   }
 
   return (
