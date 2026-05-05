@@ -13,6 +13,7 @@ type ArticleItemProps = {
   onToggleFavorite?: (id: string) => void;
   showFavoriteButton?: boolean;
   isFavorite?: boolean;
+  created_at: string;
 };
 
 const getAvatarColor = (name: string) => {
@@ -45,6 +46,7 @@ export function ArticleItem({
   showFavoriteButton,
   onToggleFavorite,
   isFavorite,
+  created_at
 }: ArticleItemProps) {
   const avatarColor = getAvatarColor(userName);
 
@@ -103,6 +105,7 @@ export function ArticleItem({
         <span className="text-xs text-gray-400 truncate">{title}</span>
         <span className="text-xs text-gray-400 truncate">{getConditionLabelByValue(condition)}</span>
         <span className="text-xs text-gray-400 truncate">{getCategoryLabelByValue(category)}</span>
+        <span className="text-xs text-gray-400 truncate">{created_at}</span>
       </div>
     </div>
   );

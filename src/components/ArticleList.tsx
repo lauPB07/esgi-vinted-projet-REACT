@@ -34,6 +34,7 @@ export function ArticleList({
             showFavoriteButton={showFavoriteButton}
             onToggleFavorite={onToggleFavorite}
             isFavorite={favoriteIds?.has(article.id)}
+            created_at={article.createdAt}
           />
         ))
       }
