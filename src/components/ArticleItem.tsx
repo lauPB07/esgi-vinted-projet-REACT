@@ -1,3 +1,5 @@
+import { getCategoryLabelByValue, getConditionLabelByValue } from "../types/article.ts";
+
 type ArticleItemProps = {
   id: string;
   title: string;
@@ -99,8 +101,8 @@ export function ArticleItem({
           {size}
         </span>
         <span className="text-xs text-gray-400 truncate">{title}</span>
-        <span className="text-xs text-gray-400 truncate">{condition}</span>
-        <span className="text-xs text-gray-400 truncate">{category}</span>
+        <span className="text-xs text-gray-400 truncate">{getConditionLabelByValue(condition)}</span>
+        <span className="text-xs text-gray-400 truncate">{getCategoryLabelByValue(category)}</span>
       </div>
     </div>
   );
