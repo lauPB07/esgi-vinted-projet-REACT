@@ -40,7 +40,7 @@ export default function PublishPage() {
     }
   return (
     <><h1>Publier une annonce</h1>
-      <ArticleForm onCreateArticle={handleCreateArticle} /></>
+      <ArticleForm onSubmit={handleCreateArticle} /></>
 
   );
 }

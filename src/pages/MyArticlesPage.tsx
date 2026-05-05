@@ -62,6 +62,8 @@ export default function MyArticlesPage() {
           onClickTitle={(id) => navigate(`/articles/${id}`)}
           showDeleteButton={true}
           onDelete={handleDelete}
+          showEditButton={true}
+          onEdit={(id) => navigate(`/articles/${id}/edit`)}
         />
       ) : (
         <p className="text-gray-600">Vous n'avez pas encore publié d'annonce.</p>

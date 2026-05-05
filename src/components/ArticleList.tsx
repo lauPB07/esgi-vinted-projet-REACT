@@ -10,6 +10,8 @@ type ArticleListProps = {
   favoriteIds?: Set<string>;
   showDeleteButton?: boolean;
   onDelete?: (id: string) => void;
+  showEditButton?: boolean;
+  onEdit?: (id: string) => void;
 };
 
 export function ArticleList({
@@ -20,6 +22,8 @@ export function ArticleList({
   favoriteIds,
   showDeleteButton = false,
   onDelete,
+  showEditButton = false,
+  onEdit,
 }: ArticleListProps) {
   const currentUserId = useCurrentUserId();
   return (
@@ -43,6 +47,8 @@ export function ArticleList({
             created_at={article.createdAt}
             showDeleteButton={showDeleteButton && article.userId === currentUserId}
             onDelete={onDelete}
+            showEditButton={showEditButton && article.userId === currentUserId}
+            onEdit={onEdit}
           />
         ))
       }

@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { CONDITIONS, CATEGORIES, type ArticleFormData } from "../types/article.ts";
+import { CONDITIONS, CATEGORIES, type Article, type ArticleFormData } from "../types/article.ts";
 
 type ArticlesFormProps = {
-  onCreateArticle: (data : ArticleFormData) => void,
+  onSubmit: (data: ArticleFormData) => void;
+  article?: Article;
 };
 
 type FormErrors = Partial<Record<keyof ArticleFormData, string>>;
@@ -16,14 +17,15 @@ const isValidImageUrl = (value: string): boolean => {
   }
 };
 
-export function ArticleForm({ onCreateArticle }: ArticlesFormProps) {
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [price, setPrice] = useState(0);
-  const [category, setCategory] = useState("");
-  const [size, setSize] = useState("");
-  const [condition, setCondition] = useState("");
-  const [imageUrl, setImageUrl] = useState("");
+export function ArticleForm({ onSubmit, article }: ArticlesFormProps) {
+  const isEditMode = Boolean(article);
+  const [title, setTitle] = useState(article?.title ?? "");
+  const [description, setDescription] = useState(article?.description ?? "");
+  const [price, setPrice] = useState(article?.price ?? 0);
+  const [category, setCategory] = useState(article?.category ?? "");
+  const [size, setSize] = useState(article?.size ?? "");
+  const [condition, setCondition] = useState(article?.condition ?? "");
+  const [imageUrl, setImageUrl] = useState(article?.imageUrl ?? "");
   const [errors, setErrors] = useState<FormErrors>({});
 
   const validate = (): FormErrors => {
@@ -77,7 +79,9 @@ export function ArticleForm({ onCreateArticle }: ArticlesFormProps) {
   return (
     <div className="min-h-screen bg-gray-100 py-10 px-4 font-sans">
       <div className="max-w-2xl mx-auto bg-white shadow-sm rounded-sm p-8">
-        <h1 className="text-2xl font-semibold text-gray-800 mb-8">Vends tes articles</h1>
+        <h1 className="text-2xl font-semibold text-gray-800 mb-8">
+          {isEditMode ? "Modifier ton article" : "Vends tes articles"}
+        </h1>
 
         <form className="space-y-6">
           <div
@@ -182,7 +186,7 @@ export function ArticleForm({ onCreateArticle }: ArticlesFormProps) {
                   return;
                 }
                 setErrors({});
-                onCreateArticle({
+                onSubmit({
                   title: title.trim(),
                   description: description.trim(),
                   price,
@@ -191,17 +195,19 @@ export function ArticleForm({ onCreateArticle }: ArticlesFormProps) {
                   condition,
                   imageUrl: imageUrl.trim(),
                 });
-                setTitle("");
-                setDescription("");
-                setPrice(0);
-                setCategory("");
-                setSize("");
-                setCondition("");
-                setImageUrl("");
+                if (!isEditMode) {
+                  setTitle("");
+                  setDescription("");
+                  setPrice(0);
+                  setCategory("");
+                  setSize("");
+                  setCondition("");
+                  setImageUrl("");
+                }
               }}
               type="submit"
             >
-              Ajouter l'article
+              {isEditMode ? "Enregistrer les modifications" : "Ajouter l'article"}
             </button>
           </div>
         </form>
