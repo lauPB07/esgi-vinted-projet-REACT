@@ -1,5 +1,6 @@
 import { ArticleItem } from "./ArticleItem.tsx";
 import type { Article } from "../types/article.ts";
+import { useCurrentUserId } from "../hooks/useCurrentUserId.ts";
 
 type ArticleListProps = {
   articles: Article[];
@@ -7,6 +8,8 @@ type ArticleListProps = {
   showFavoriteButton?: boolean;
   onToggleFavorite?: (id: string) => void;
   favoriteIds?: Set<string>;
+  showDeleteButton?: boolean;
+  onDelete?: (id: string) => void;
 };
 
 export function ArticleList({
@@ -15,7 +18,10 @@ export function ArticleList({
   showFavoriteButton = false,
   onToggleFavorite,
   favoriteIds,
+  showDeleteButton = false,
+  onDelete,
 }: ArticleListProps) {
+  const currentUserId = useCurrentUserId();
   return (
     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-4 gap-4 p-4">
       {
@@ -35,6 +41,8 @@ export function ArticleList({
             onToggleFavorite={onToggleFavorite}
             isFavorite={favoriteIds?.has(article.id)}
             created_at={article.createdAt}
+            showDeleteButton={showDeleteButton && article.userId === currentUserId}
+            onDelete={onDelete}
           />
         ))
       }
