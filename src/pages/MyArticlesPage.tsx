@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ArticleList } from "../components/ArticleList.tsx";
 import { api } from "../services/api.ts";
 import { Spinner } from "@material-tailwind/react";
@@ -7,6 +7,7 @@ import type { Article } from "../types/article.ts";
 
 export default function MyArticlesPage() {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   const { data, error, isLoading } = useQuery<Article[]>({
     queryKey: ["my-articles"],
@@ -16,6 +17,23 @@ export default function MyArticlesPage() {
       return result;
     },
   });
+
+  const deleteArticleMutation = useMutation({
+    mutationFn: (articleId: string) => api.delete(`/api/articles/${articleId}`),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["my-articles"] });
+      queryClient.invalidateQueries({ queryKey: ["articles"] });
+      queryClient.invalidateQueries({ queryKey: ["favorites"] });
+    },
+    onError: (error: unknown) => {
+      const message = error instanceof Error ? error.message : "Erreur lors de la suppression de l'annonce";
+      window.alert(message);
+    },
+  });
+
+  const handleDelete = (articleId: string) => {
+    deleteArticleMutation.mutate(articleId);
+  };
 
   if (isLoading) {
     return (
@@ -39,7 +57,12 @@ export default function MyArticlesPage() {
     <div>
       <h1 className="text-3xl font-bold mb-6">Mes annonces ({data?.length ?? 0})</h1>
       {data?.length ? (
-        <ArticleList articles={data} onClickTitle={(id) => navigate(`/articles/${id}`)} />
+        <ArticleList
+          articles={data}
+          onClickTitle={(id) => navigate(`/articles/${id}`)}
+          showDeleteButton={true}
+          onDelete={handleDelete}
+        />
       ) : (
         <p className="text-gray-600">Vous n'avez pas encore publié d'annonce.</p>
       )}
